@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Автостоянка</title>
+
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 0;
+      height: 200vh;
+      background: url('https://i.pinimg.com/originals/fe/34/5c/fe345c40de1ca78b02465fd868cf6196.jpg') no-repeat center center fixed;
+      background-size: cover;
+      background-attachment: fixed; /* Фиксированный фон */
+      transition: background 0.5s;
+    }
+
+    .content {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+    }
+
+    h1 {
+      margin-top: 50px;
+      margin-bottom: 20px;
+      font-size: 36px;
+      font-weight: bold;
+      font-family: 'Pacifico', cursive;
+      color: #3498db;
+    }
+
+    button {
+      font-size: 18px;
+      margin: 10px;
+      padding: 12px 24px;
+      cursor: pointer; 
+      transition: background-color 0.3s, transform 0.3s;
+      background-color: #3498db;
+      color: #fff;
+      border: none;
+      border-radius: 30px;
+      outline: none;
+    }
+
+    button:hover {
+      background-color: #2980b9;
+      transform: scale(1.1);
+    }
+
+    input {
+      font-size: 16px;
+      padding: 10px;
+      margin: 10px;
+      border-radius: 10px;
+      border: 1px solid #ddd;
+    }
+
+    #владелец {
+      opacity: 0;
+      padding: 20px;
+      background-color: rgba(255, 255, 255, 0.8);
+      border-radius: 10px;
+      text-align: center;
+      margin-top: 20px;
+      transition: opacity 1s, transform 1s;
+    }
+
+    #владелец.appear {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    #владелец.disappear {
+      opacity: 0;
+      transform: translateY(-100%);
+    }
+  </style>
+</head>
+<body>
+
+<div class="content">
+  <h1>Автостоянка</h1>
+  <button onclick="выдатьПарковку()">Получить парковку</button>
+  <button onclick="вернутьПарковку()">Вернуть парковку</button>
+  <input type="text" id="номерПарковки" placeholder="Введите номер парковки" style="display:none;">
+  <button onclick="показатьСвободныеПарковки()">Показать свободные парковки</button>
+</div>
+
+<div id="владелец">
+  <h2>Информация о владельце парковочного помещения</h2>
+  <p>Имя: Иван Иванов</p>
+  <p>Контактный номер: +7 (123) 456-7890</p>
+  <p>Адрес: Улица Ленина, 123</p>
+</div>
+
+<script>
+  let парковки = Array.from({ length: 10 }, (_, i) => i + 1);
+  let времяНачала = 0;
+  let суммаЗаСтоянку = 0;
+
+  function выдатьПарковку() {
+    if (парковки.length > 0) {
+      const номерПарковки = парковки.shift();
+      времяНачала = Date.now();
+      alert(`Вы получили парковку №${номерПарковки}`);
+    } else {
+      alert("Извините, свободных парковок нет.");
+    }
+  }
+
+  function вернутьПарковку() {
+    const номерПарковки = prompt("Введите номер парковки для возврата:");
+    const номер = parseInt(номерПарковки, 10);
+
+    if (!isNaN(номер) && номер >= 1 && номер <= 10) {
+      if (!парковки.includes(номер)) {
+        парковки.unshift(номер); // Вставляем в начало массива
+        const времяСтоянки = Date.now() - времяНачала;
+        const суммаЗаМинуту = 10000; // Стоимость стоянки за минуту
+        суммаЗаСтоянку += времяСтоянки / (60 * 1000) * суммаЗаМинуту;
+        alert(`Парковка №${номер} возвращена. Сумма за стоянку: ${суммаЗаСтоянку.toFixed(2)} рублей.`);
+      } else {
+        alert("Эта парковка уже свободна.");
+      }
+    } else {
+      alert("Некорректный номер парковки.");
+    }
+  }
+
+  function показатьСвободныеПарковки() {
+    alert(`Свободные парковки: ${парковки.join(', ')}`);
+  }
+
+  // Появление информации о владельце при достижении 180vh
+  window.addEventListener('scroll', function() {
+    const владелец = document.getElementById('владелец');
+    const currentScrollTop = window.scrollY;
+    const threshold = 180; // Высота в vh
+
+    if (currentScrollTop > threshold) {
+      владелец.classList.add('appear');
+    } else {
+      владелец.classList.remove('appear');
+    }
+  });
+</script>
+
+</body>
+</html>
